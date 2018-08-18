@@ -1,6 +1,6 @@
 #!/bin/bash
 #
-# a script to initialize the wifi interface and connect to an open ap
+# a script to initialize the wlan0 interface, set promiscuous mode, connect to an open ap, and start a ping
 #
 ##############################################################################################################
 
