@@ -45,15 +45,35 @@ ifconfig wlan0 promisc
 echo $short
 echo "Bringing wlan0 up.."
 ifconfig wlan0 up 
+echo "Flushing route table"
+# Doing this because old routing table had references to eth0 causing destination unreachable errors
+ip route flush table main
+netstat -nr
 echo $short
 echo "Setting wlan0 mode to managed.."
 iwconfig wlan0 mode managed
 echo $short
 echo "Connecting to wifi with wpa_supplicant.."
 wpa_supplicant -B -Dwext -iwlan0 -c/etc/wpa_supplicant.conf
+
+echo $short
+echo "Releasing old DHCP lease.."
+dhclient -r -v wlan0 
+
+echo $short
+echo "Fetching IP through DHCP.."
+dhclient -1 -v wlan0
+echo $short
+
+if [ $? -ne 0 ]; then
+     f_error
+     f_terminate
+fi
+
 echo $short
 echo "Displaying ip configuration.."
 ifconfig wlan0
+sleep 3
 
 echo $short
 echo "Starting a ping to google DNS.."
