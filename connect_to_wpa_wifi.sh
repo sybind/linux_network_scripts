@@ -31,6 +31,7 @@ f_terminate(){
 echo $short
 echo "Stopping network manager.."
 service network-manager stop
+
 echo $short
 echo "Killing dhclient and wpa_supplicant.."
 killall dhclient
@@ -39,19 +40,25 @@ killall wpa_supplicant
 echo $short
 echo "Bringing wlan0 down.."
 ifconfig wlan0 down
+
 echo $short
 echo "Putting wlan0 into promiscuous.."
 ifconfig wlan0 promisc
+
 echo $short
 echo "Bringing wlan0 up.."
 ifconfig wlan0 up 
+
+echo $short
 echo "Flushing route table"
 # Doing this because old routing table had references to eth0 causing destination unreachable errors
 ip route flush table main
 netstat -nr
+
 echo $short
 echo "Setting wlan0 mode to managed.."
 iwconfig wlan0 mode managed
+
 echo $short
 echo "Connecting to wifi with wpa_supplicant.."
 wpa_supplicant -B -Dwext -iwlan0 -c/etc/wpa_supplicant.conf
@@ -63,11 +70,11 @@ dhclient -r -v wlan0
 echo $short
 echo "Fetching IP through DHCP.."
 dhclient -1 -v wlan0
-echo $short
+echo "Exit code == $?"
 
 if [ $? -ne 0 ]; then
-     f_error
-     f_terminate
+  echo "Entering terminate"
+  f_terminate
 fi
 
 echo $short
