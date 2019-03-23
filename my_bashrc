@@ -1,0 +1,2 @@
+# e.g., [~/hello]$ <-- in green
+PS1="\e[0;32m[\w\]]\$ \e[m "
